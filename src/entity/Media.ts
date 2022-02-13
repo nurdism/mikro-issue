@@ -19,6 +19,6 @@ export class Media extends BaseEntity<Media, 'storageDocument'> {
   @ManyToOne((type) => Application, { inversedBy: (e) => e.media, onDelete: 'CASCADE' })
   application: Application
 
-  @OneToOne((type) => StorageDocument, (e) => e.media, { onDelete: 'SET NULL', owner: true, nullable: true })
+  @OneToOne((type) => StorageDocument, (e) => e.mediaThumb, { onDelete: 'SET NULL', owner: true, nullable: true })
   thumbDocument: StorageDocument | null
 }

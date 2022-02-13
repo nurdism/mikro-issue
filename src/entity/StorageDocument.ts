@@ -38,4 +38,7 @@ export class StorageDocument extends BaseEntity<StorageDocument, 'id'> {
 
   @OneToOne((type) => Media, (e) => e.storageDocument, { nullable: true })
   media: Media | null
+
+  @OneToOne((type) => Media, (e) => e.thumbDocument, { nullable: true })
+  mediaThumb: Media | null
 }

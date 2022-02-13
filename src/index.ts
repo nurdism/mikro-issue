@@ -8,58 +8,56 @@ import { StorageDocument } from './entity/StorageDocument'
 import { Media } from './entity/Media'
 
 (async () => {
-  const orm = await MikroORM.init(config)
-  let em = orm.em.fork()
+const orm = await MikroORM.init(config)
+let em = orm.em.fork()
 
-  const application = new Application()
-  console.log(application)
+const application = new Application()
+console.log(application)
 
-  const storageDocument = new StorageDocument()
-  storageDocument.application = application
-  console.log(storageDocument)
+const storageDocument = new StorageDocument()
+storageDocument.application = application
+console.log(storageDocument)
 
-  const thumbDocument = new StorageDocument()
-  thumbDocument.application = application
-  console.log(thumbDocument)
+const thumbDocument = new StorageDocument()
+thumbDocument.application = application
+console.log(thumbDocument)
 
-  const media = new Media()
-  media.assign({
-    application,
-    storageDocument,
-    thumbDocument
-  }, { em })
+const media = new Media()
+media.assign({
+  application,
+  storageDocument,
+  thumbDocument
+}, { em })
 
-  console.log(media)
+console.log(media)
 
-  await em.persistAndFlush(media)
-  em = em.fork()
+await em.persistAndFlush(media)
+em = em.fork()
 
-  const find = await em.createQueryBuilder(Media).select('*').where({ application }).getResult()
-  console.log(find)
+const find = await em.createQueryBuilder(Media).select('*').where({ application }).getResult()
+console.log(find)
 
   process.exit(0)
 })();
 
 /*
 Application {
-  id: '627698433487004256',
+  id: '627716775578559332',
   media: Collection<Media> { initialized: true, dirty: false },
   storageDocuments: Collection<StorageDocument> { initialized: true, dirty: false }
 }
-
 StorageDocument {
-  id: '627698433494451657', <-- media.storageDocument = StorageDocument<627698433494451657> media.storageDocument
+  id: '627716775581055991',
   application: Application {
-    id: '627698433487004256',
+    id: '627716775578559332',
     media: Collection<Media> { initialized: true, dirty: false },
     storageDocuments: Collection<StorageDocument> { '0': [StorageDocument], initialized: true, dirty: true }
   }
 }
-
 StorageDocument {
-  id: '627698433504465500', <-- media.thumbDocument = StorageDocument<627698433504465500>
+  id: '627716775592608955',
   application: Application {
-    id: '627698433487004256',
+    id: '627716775578559332',
     media: Collection<Media> { initialized: true, dirty: false },
     storageDocuments: Collection<StorageDocument> {
       '0': [StorageDocument],
@@ -69,10 +67,9 @@ StorageDocument {
     }
   }
 }
-
 Media {
   application: Application {
-    id: '627698433487004256',
+    id: '627716775578559332',
     media: Collection<Media> { '0': [Media], initialized: true, dirty: true },
     storageDocuments: Collection<StorageDocument> {
       '0': [StorageDocument],
@@ -81,10 +78,10 @@ Media {
       dirty: true
     }
   },
-  storageDocument: StorageDocument { <-- media.storageDocument = StorageDocument<627698433494451657> media.storageDocument (Not OK)
-    id: '627698433504465500',
+  storageDocument: StorageDocument {
+    id: '627716775581055991',
     application: Application {
-      id: '627698433487004256',
+      id: '627716775578559332',
       media: [Collection<Media>],
       storageDocuments: [Collection<StorageDocument>]
     },
@@ -94,14 +91,14 @@ Media {
       thumbDocument: [StorageDocument]
     }
   },
-  thumbDocument: StorageDocument { <-- media.storageDocument = StorageDocument<627698433504465500> media.thumbDocument (OK)
-    id: '627698433504465500',
+  thumbDocument: StorageDocument {
+    id: '627716775592608955',
     application: Application {
-      id: '627698433487004256',
+      id: '627716775578559332',
       media: [Collection<Media>],
       storageDocuments: [Collection<StorageDocument>]
     },
-    media: Media {
+    mediaThumb: Media {
       application: [Application],
       storageDocument: [StorageDocument],
       thumbDocument: [StorageDocument]
@@ -110,13 +107,10 @@ Media {
 }
 [
   Media {
-    storageDocument: Ref<StorageDocument> { id: '627698433504465500', media: [Media] }, <-- Refs are the same, they should be diffrent
-    thumbDocument: Ref<StorageDocument> { id: '627698433504465500', media: [Media] },
-    application: Ref<Application> { id: '627698433487004256' }
+    storageDocument: Ref<StorageDocument> { id: '627716775581055991', media: [Media] },
+    application: Ref<Application> { id: '627716775578559332' },
+    thumbDocument: Ref<StorageDocument> { id: '627716775592608955', mediaThumb: [Media] }
   }
 ]
-
-in the database it persisted correctly, when pulling the refs get mixed up.
-
 */
 
